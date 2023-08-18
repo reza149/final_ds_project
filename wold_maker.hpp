@@ -81,6 +81,18 @@ int command_type_identifier(sp command)
         return 4;
     }
 
+    //buil world command
+    if(command.build_flag == true)
+    {
+        return 5;
+    }
+
+    //exit command
+    if(command.exit_flag == true)
+    {
+        return 6;
+    }
+
     return 0;
 }
 
@@ -90,6 +102,21 @@ void builder(universe * world, sp build_map, int command_type)
     node node_temp;
     galaxy galaxy_temp;
     road road_temp;
+
+    string origin_galaxy;
+    string * origin_galaxy_ptr = &origin_galaxy;
+    int origin_galaxy_index;
+    string origin_node;
+    string * origin_node_ptr = &origin_node;
+    int origin_node_index;
+
+    string destination_galaxy;
+    string * destination_galaxy_ptr = &destination_galaxy;
+    int destination_galaxy_index;
+    string destination_node;
+    string * destination_node_ptr = &destination_node;
+    int destination_node_index;
+
     switch(command_type)
     {
         //creating node mode
@@ -115,34 +142,51 @@ void builder(universe * world, sp build_map, int command_type)
 
         //creating road mode
         case 3:
-        //finding galaxy
-        for(int i = 0; i < (*world).galaxy_list.size(); i++)
+
+        //extracting galaxy name and node name of origin
+        road_create_name_cutter(origin_galaxy_ptr, origin_node_ptr, build_map.name);
+        //extracting galaxy name and node name of destination 
+        road_create_name_cutter(destination_galaxy_ptr, destination_node_ptr, build_map.name2);
+
+        //finding origin galaxy
+        origin_galaxy_index = (*world).search_galaxy(origin_galaxy);
+        origin_node_index = (*world).search_node(origin_node, origin_galaxy_index);
+
+        //finding destination galaxy
+        destination_galaxy_index = (*world).search_galaxy(destination_galaxy);
+        destination_node_index = (*world).search_node(destination_node, destination_galaxy_index);
+        /*
+        cout << "origin galaxy name = " << origin_galaxy << " index = " << origin_galaxy_index << " ";
+        cout << "origin node name = " << origin_node << " index = " << origin_node_index << endl;
+        cout << "destination galaxy name = " << destination_galaxy << " index = " << destination_galaxy_index << " ";
+        cout << "destination node name = " << destination_node << " index = " << destination_node_index << endl;
+        */
+        //create external road
+        if(origin_galaxy != destination_galaxy)
         {
-            if((*world).galaxy_list[i].get_name() == build_map.galaxy_name)
-            {
-                //finding node
-                for(int j = 0; j < (*world).galaxy_list[i].node_list.size(); j++)
-                {
-                    if((*world).galaxy_list[i].node_list[j].get_name() == build_map.name)
-                    {   
-                        //create external road
-                        if(build_map.galaxy_name != (*world).galaxy_list[i].get_name())
-                        {
-                            road_temp.external_flag = true;
-                            road_temp.internal_flag = false;
-
-                            road_temp.cost = stoi(build_map.cost);
-
-                            road_temp.destination_galaxy_name = build_map.galaxy_name;
-                            road_temp.destination_node_name = build_map.name2;
-
-                            road_temp.origin_node_name = build_map.name;
-                            road_temp.origin_galaxy_name = 
-                        }
-                    }
-                }
-            }   
+            road_temp.external_flag = true;
+            road_temp.internal_flag = false;
         }
+        //create internal road
+        else
+        {
+            road_temp.external_flag = false;
+            road_temp.internal_flag = true;
+        }
+
+        //initialize road
+        road_temp.cost = stoi(build_map.cost);
+
+        road_temp.destination_galaxy_name = destination_galaxy;
+        road_temp.destination_node_name = destination_node;
+
+        road_temp.origin_node_name = origin_node;
+        road_temp.origin_galaxy_name = origin_galaxy;
+
+        //putting road in the origin node
+        (*world).galaxy_list[origin_galaxy_index].node_list[origin_node_index].road_list.push_back(road_temp);
+        //putting road in the destination node
+        (*world).galaxy_list[destination_galaxy_index].node_list[destination_node_index].road_list.push_back(road_temp);
 
 
         break;

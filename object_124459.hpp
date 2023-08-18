@@ -4,8 +4,10 @@
 #include<iostream>
 #include<string>
 #include<vector>
-
-#include"object.hpp"
+#include<map>
+#include<queue>
+#include<climits>
+#include<algorithm>
 
 using namespace std;
 typedef struct road road;
@@ -28,6 +30,7 @@ struct road
 class node
 {
     public:
+    node(){}
     vector <road> road_list;
 
     void set_name_id_galaxy(string input, string number, string input2);
@@ -83,46 +86,15 @@ void galaxy::set_name_id(string input, string number)
 }
 
 
-
 ///////////////////////////////////////////////////////////////////////
 class universe
 {
     public:
     vector <galaxy> galaxy_list;
-
-    int search_galaxy(string galaxy_name);
-    int search_node(string node_name, int galaxy_index);
-
     
     void show_universe();
+    vector<node> shortest_path(vector<node>, node, node);
 };
-
-//returning the index of the galaxy
-int universe::search_galaxy(string galaxy_name)
-{
-    for(int i = 0; i < galaxy_list.size(); i++)
-    {
-        if(galaxy_name == galaxy_list[i].get_name())
-        {
-            return i;
-        }
-    }
-    return -1;
-}
-
-//returning the index of the node
-int universe::search_node(string node_name, int galaxy_index)
-{
-    for(int i = 0; i < galaxy_list[galaxy_index].node_list.size(); i++)
-    {
-        if(galaxy_list[galaxy_index].node_list[i].get_name() == node_name)
-        {
-            return i;
-        }
-    }
-    return -1;
-}
-
 
 
 //print all galaxies and nodes and  roads
@@ -156,7 +128,76 @@ void universe::show_universe()
 }
 
 
+void findShortestPath(vector<node>& graph, node& startNode, node& endNode)
+{
+    int n = graph.size();
+    vector<int> distance(n, INT_MAX); // Distance from start node to each node
+    vector<int> prev(n, -1); // Previous node in the shortest path
 
+    // Custom comparator for the priority queue
+    auto cmp = [](const pair<int, int>& a, const pair<int, int>& b) {
+        return a.second > b.second;
+    };
+    priority_queue<pair<int, int>, vector<pair<int, int>>, decltype(cmp)> pq(cmp); // Min heap for Dijkstra's algorithm
 
+    // Initialize the distance of the start node to 0
+    distance[stoi(startNode.get_name())] = 0;
+
+    // Push the start node to the priority queue
+    pq.push(make_pair(stoi(startNode.get_name()), 0));
+
+    while (!pq.empty())
+    {
+        // Get the node with the minimum distance from the priority queue
+        int currNode = pq.top().first;
+        int currDist = pq.top().second;
+        pq.pop();
+
+        // If the current distance is greater than the calculated distance, skip the node
+        if (currDist > distance[currNode])
+            continue;
+
+        // Iterate through all the roads from the current node
+        for (const road& r : graph[currNode].road_list)
+        {
+            // Calculate the distance to the neighboring node
+            int neighborNode = stoi(r.destination_node_name);
+            int neighborDist = currDist + r.cost;
+
+            // If the calculated distance is less than the current distance, update the distance and previous node
+            if (neighborDist < distance[neighborNode])
+            {
+                distance[neighborNode] = neighborDist;
+                prev[neighborNode] = currNode;
+                pq.push(make_pair(neighborNode, neighborDist));
+            }
+        }
+    }
+
+    // Check if a path exists from the start node to the end node
+    if (prev[stoi(endNode.get_name())] == -1)
+    {
+        cout << "No path exists between the nodes." << endl;
+        return;
+    }
+
+    // Reconstruct the shortest path
+    vector<int> path;
+    int currentNode = stoi(endNode.get_name());
+    while (currentNode != -1)
+    {
+        path.push_back(currentNode);
+        currentNode = prev[currentNode];
+    }
+    reverse(path.begin(), path.end());
+
+    // Print the shortest path
+    cout << "Shortest path: ";
+    for (int i : path)
+    {
+        cout << i << " ";
+    }
+    cout << endl;
+}
 
 #endif

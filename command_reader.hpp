@@ -7,6 +7,8 @@
 using namespace std;
 typedef struct package sp;
 
+void road_create_name_cutter(string * galaxy_name, string * node_name ,string name);
+
 struct package
 {
     bool create_flag;
@@ -14,18 +16,16 @@ struct package
     bool node_flag;
     bool galaxy_flag;
     bool road_flag;
+    //user handling flags
+    bool build_flag;
+    bool exit_flag;
     string name;
     string name2;
     string node_type;
+    string address;
     string id;
     string cost;
     string galaxy_name;
-
-    //address for road mode
-    string origin_galaxy;
-    string origin_node;
-    string destination_galaxy;
-    string destination_node;
 };
 
 //put package in default state
@@ -36,6 +36,7 @@ sp default_func(sp inp)
     inp.node_flag = false;
     inp.road_flag = false;
     inp.create_flag = false;
+    inp.build_flag = false;
     inp.name = "&";
     inp.name2 = "&";
     inp.node_type = "&";
@@ -75,40 +76,60 @@ sp command_flag(sp inp, string command)
     //finding road word
     inp.road_flag = word_finder(command, ":road ");
 
+    //finding build word
+    inp.build_flag = word_finder(command, "build world");
+
+    //finding exit word
+    inp.exit_flag = word_finder(command, "exit");
+
     return inp;
 }
 
-//address separator
-void ad_cuter(sp * f_out_ptr, string address)
+//find mode address separator
+void find_address_cutter(string address, string * o_galaxy, string * o_node, string * d_galaxy, string * d_node)
 {
-    string origin_galaxy_name;
-    string origin_node_name;
-    string destination_galaxy_name;
-    string destination_node_name;
+    string help;
+    string help2;
 
     bool point_flag = false;
+    int half_index;
 
-    int i;
 
-    for(i = 0; address[i] != '>'; i++)
+    for(int i = 0; address[i] != '-'; i++)
     {
-        if(address[i] == '.')
+        help = help + address[i];
+        half_index = i;
+    }
+    road_create_name_cutter(o_galaxy, o_node, help);
+    for(int i = half_index + 3; i < address.size(); i++)
+    {
+        help2 = help2 + address[i];
+    }
+    road_create_name_cutter(d_galaxy, d_node, help2);
+}
+
+//road create mode name separator 
+void road_create_name_cutter(string * galaxy_name, string * node_name ,string name)
+{
+    bool point_flag = false;
+    for(int i = 0; i < name.size(); i++)
+    {
+        if(name[i] == '.')
         {
             point_flag = true;
         }
-
         if(point_flag == false)
         {
-            origin_galaxy_name = origin_galaxy_name + address[i];
+            (*galaxy_name) = (*galaxy_name) + name[i];
         }
-
         if(point_flag == true)
         {
-            origin_node_name = origin_node_name + address[i];
+            if(name[i] != '.')
+            {
+                (*node_name) = (*node_name) + name[i];
+            }
         }
     }
-
-    
 }
 
 //extracting information from command
@@ -128,6 +149,7 @@ sp get_command_inf(string command)
 
     int help;
     char help2 = 39;
+    bool name_flag = false;
 
     //extracting from the command
     for(int i = 0; i < command.size(); i++)
@@ -141,11 +163,13 @@ sp get_command_inf(string command)
                 address = address + command[help];
                 help++;
             }
-            ad_cuter(f_out_ptr, address);
+            f_out.address = address;
         }
 
-        //extracting the name of node or galaxy or strat node of road
-        if((command[i - 1] == '(') && (f_out.create_flag == true) && (f_out.road_flag == false))
+        //extracting the name of node or galaxy 
+        //or strat node of road
+        //and end node of road
+        if((command[i - 1] == '(') && (f_out.create_flag == true))
         {
             help = i;
             while((command[help] != ':') && (command[help] != ')'))
@@ -153,7 +177,19 @@ sp get_command_inf(string command)
                 name = name + command[help];
                 help++;
             }
-            f_out.name = name;
+            //extracting start node name in create road mode
+            if(name_flag == false)
+            {
+                f_out.name = name;
+                name.clear();
+                name_flag = true;
+            }
+            //extracting end node name in create road mode
+            else
+            {
+                f_out.name2 = name;
+                name.clear();
+            }
         }
 
         //extracting node type
@@ -190,19 +226,6 @@ sp get_command_inf(string command)
                 help++;
             }
             f_out.cost = cost;
-        }
-
-        //extracting destination name
-        if((command[i] == '(') && (f_out.road_flag == true))
-        {
-            help = i + 1;
-            name.clear();
-            while(command[help] != ')')
-            {
-                name = name + command[help];
-                help++;
-            }
-            f_out.name2 = name;
         }
 
         //extracting galaxy name

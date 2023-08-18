@@ -44,23 +44,94 @@ void func_t()
     cout << help << endl;
 }
 
+void road_create_name_cutter(string * galaxy_name, string * node_name , string name)
+{
+    cout << "fuck2" << endl;
+    cout << name << endl; 
+    bool point_flag = false;
+    for(int i = 0; i < name.size(); i++)
+    {
+        if(name[i] == '.')
+        {
+            point_flag = true;
+        }
+        if(point_flag == false)
+        {
+            (*galaxy_name) = (*galaxy_name) + name[i];
+            cout << (*galaxy_name) << endl;
+        }
+        if(point_flag == true)
+        {
+            if(name[i] != '.')
+            {
+                (*node_name) = (*node_name) + name[i];
+                cout << (*node_name) << endl;
+            }
+        }
+    }
+}
+
+void find_address_cutter(string address, string * o_galaxy, string * o_node, string * d_galaxy, string * d_node)
+{
+    string help;
+    string help2;
+
+    bool point_flag = false;
+    int half_index;
+
+
+    for(int i = 0; address[i] != '-'; i++)
+    {
+        help = help + address[i];
+        half_index = i;
+    }
+    road_create_name_cutter(o_galaxy, o_node, help);
+    cout << (*o_galaxy) << (*o_node) << endl;
+    for(int i = half_index + 3; i < address.size(); i++)
+    {
+        help2 = help2 + address[i];
+    }
+    cout << help2 << endl;
+    road_create_name_cutter(d_galaxy, d_node, help2);
+    cout << (*d_galaxy) << (*d_node) << endl;
+}
+
+void func50(int * help)
+{
+    (*help) = (*help) + 5; 
+}
+
+void func45(int * help)
+{
+    func50(help);
+}
+
 
 
 int main()
 {
     vector <int> test;
 
-    for(int i = 0; i < 9; i++)
-    {
-        test.push_back(i);
-    }
+    string o_galaxy_name;
+    string * o_galaxy_name_ptr = &o_galaxy_name;
+    string o_node_name;
+    string * o_node_name_ptr = &o_node_name;
 
-    for(int j = 0; j < test.size(); j++)
-    {
-        cout << test[j] << endl;
-    }
+    string d_galaxy_name;
+    string * d_galaxy_name_ptr = &d_galaxy_name;
+    string d_node_name;
+    string * d_node_name_ptr = &d_node_name;
+
+    //find_address_cutter("AS4.W->AS4.X", o_galaxy_name_ptr, o_node_name_ptr, d_galaxy_name_ptr, d_node_name_ptr);
+
+    //cout << "o_g name = " << o_galaxy_name << " o_d name = " << o_node_name << " d_g name = " << d_galaxy_name << " d_d name = " << d_node_name << endl;
     
+    o_galaxy_name = "reza";
+
+    cout << stoi(o_galaxy_name) << endl;
 
     return 0;
 }
+
+
 //g++ -o ap2 test2.cpp
