@@ -1,0 +1,10 @@
+asw1 	      id = 12
+nsw1 bg	      id = 121
+nsw2 non bg   id = 122
+nsw3 non bg   id = 123
+
+
+asw2		id = 13
+naw1 bg		id = 131
+naw2 nonbg	id = 132
+naw3 nonbg	id = 133

@@ -1,0 +1,10 @@
+create (asw1: galaxy, {id: '23'})
+create (nsw1: node, {id: '121', type: 'bg', galaxy: 'asw1'})
+create (nsw2: node, {id: '122', type: 'nonbg', galaxy: 'asw1'})
+create (nsw3: node, {id: '123', type: 'nonbg', galaxy: 'asw1'})
+create (asw2: galaxy, {id: '13'})
+create (naw1: node, {id: '131', type: 'bg', galaxy: 'asw2'})
+create (naw2: node, {id: '132', type: 'nonbg', galaxy: 'asw2'})
+create (naw3: node, {id: '133', type: 'nonbg', galaxy: 'asw2'})
+&&
+

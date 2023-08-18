@@ -1,0 +1,13 @@
+CREATE (A: Node, {id: ‘1’, Type: ‘BG’, galaxy: 'name'})
+
+
+creat (ac: galaxy, {id: '23'})
+
+
+CREATE (A) – [:ROAD {cost:50}] –> (B)
+
+
+FIND AS4.W->AS4.X
+
+
+build world

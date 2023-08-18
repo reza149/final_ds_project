@@ -16,33 +16,12 @@ struct package
     bool road_flag;
     string name;
     string name2;
+    string address;
     string node_type;
     string id;
     string cost;
     string galaxy_name;
-
-    //address for road mode
-    string origin_galaxy;
-    string origin_node;
-    string destination_galaxy;
-    string destination_node;
 };
-
-//put package in default state
-sp default_func(sp inp)
-{
-    inp.find_flag = false;
-    inp.galaxy_flag = false;
-    inp.node_flag = false;
-    inp.road_flag = false;
-    inp.create_flag = false;
-    inp.name = "&";
-    inp.name2 = "&";
-    inp.node_type = "&";
-    inp.id = "&";
-    inp.galaxy_name = "&";
-    return inp;
-}
 
 //finding a word in a string
 bool word_finder(string inp, string word)
@@ -58,67 +37,28 @@ bool word_finder(string inp, string word)
     }
 }
 
-sp command_flag(sp inp, string command)
-{
-    //finding create word
-    inp.create_flag = word_finder(command, "create ");
-
-    //finding find word
-    inp.find_flag = word_finder(command, "find ");
-
-    //finding node word
-    inp.node_flag = word_finder(command, " node,");
-
-    //finding galaxy word
-    inp.galaxy_flag = word_finder(command, "galaxy, ");
-
-    //finding road word
-    inp.road_flag = word_finder(command, ":road ");
-
-    return inp;
-}
-
-//address separator
-void ad_cuter(sp * f_out_ptr, string address)
-{
-    string origin_galaxy_name;
-    string origin_node_name;
-    string destination_galaxy_name;
-    string destination_node_name;
-
-    bool point_flag = false;
-
-    int i;
-
-    for(i = 0; address[i] != '>'; i++)
-    {
-        if(address[i] == '.')
-        {
-            point_flag = true;
-        }
-
-        if(point_flag == false)
-        {
-            origin_galaxy_name = origin_galaxy_name + address[i];
-        }
-
-        if(point_flag == true)
-        {
-            origin_node_name = origin_node_name + address[i];
-        }
-    }
-
-    
-}
-
-//extracting information from command
-sp get_command_inf(string command)
+//recognising the type of command
+sp get_string(string command)
 {
     sp f_out;
-    sp * f_out_ptr = &f_out;
-    f_out = default_func(f_out);
 
-    f_out = command_flag(f_out, command);
+    string create_key = "create";
+    string find_key = "find";
+    string node_key = "node";
+    string galaxy_key = "galaxy";
+    string road_key = "road";
+
+    bool create_flag = false;
+    bool find_flag = false;
+    bool node_flag = false;
+    bool galaxy_flag = false;
+    bool road_flag = false;
+
+    int st_create_index = 0;
+    int st_find_index = 0;
+    int st_node_index = 0;
+    int st_galaxy_index = 0;
+    int st_road_index = 0;
 
     string name;
     string address;
@@ -129,11 +69,34 @@ sp get_command_inf(string command)
     int help;
     char help2 = 39;
 
-    //extracting from the command
+
+    //finding words in command
     for(int i = 0; i < command.size(); i++)
     {
+        //finding create word
+        if(command[i] == create_key[st_create_index])
+        {
+            st_create_index++;
+        }
+        if(st_create_index == (create_key.size() - 1))
+        {
+            create_flag = true;
+            f_out.create_flag = create_flag;
+        }
+
+        //finding find word
+        if(command[i] == find_key[st_find_index])
+        {
+            st_find_index++;
+        }
+        if(st_find_index == (find_key.size() - 1))
+        {
+            find_flag = true;
+            f_out.find_flag = find_flag;
+        }
+
         //extracting  the address
-        if((command[i - 1] == ' ') && (f_out.find_flag == true))
+        if((command[i - 1] == ' ') && (find_flag == true))
         {
             help = i;
             while(help < command.size())
@@ -141,11 +104,11 @@ sp get_command_inf(string command)
                 address = address + command[help];
                 help++;
             }
-            ad_cuter(f_out_ptr, address);
+            f_out.address = address;
         }
 
         //extracting the name of node or galaxy or strat node of road
-        if((command[i - 1] == '(') && (f_out.create_flag == true) && (f_out.road_flag == false))
+        if((command[i - 1] == '(') && (create_flag == true) && (road_flag == false))
         {
             help = i;
             while((command[help] != ':') && (command[help] != ')'))
@@ -156,8 +119,42 @@ sp get_command_inf(string command)
             f_out.name = name;
         }
 
+
+        //finding node word
+        if(command[i] == node_key[st_node_index])
+        {
+            st_node_index++;
+        }
+        if(st_node_index == (node_key.size() - 1))
+        {
+            node_flag = true;
+            f_out.node_flag = node_flag;
+        }
+
+        //finding galaxy word
+        if(command[i] == galaxy_key[st_galaxy_index])
+        {
+            st_galaxy_index++;
+        }
+        if(st_galaxy_index == (galaxy_key.size() - 1))
+        {
+            galaxy_flag = true;
+            f_out.galaxy_flag = galaxy_flag;
+        }
+
+        //finding road word
+        if(command[i] == road_key[st_road_index])
+        {
+            st_road_index++;
+        }
+        if(st_road_index == (road_key.size() - 1))
+        {
+            road_flag = true;
+            f_out.road_flag = road_flag;
+        }
+
         //extracting node type
-        if((command[i - 3] == 'e') && (f_out.node_flag == true) && (command[i] == help2))
+        if((command[i - 3] == 'e') && (node_flag == true) && (command[i] == help2))
         {
             help = i + 1;
             while(command[help] != help2)
@@ -169,7 +166,7 @@ sp get_command_inf(string command)
         }
 
         //extracting node or galaxy id
-        if((command[i - 3] == 'd') && (f_out.create_flag == true) && (command[i] == help2))
+        if((command[i - 3] == 'd') && (create_flag == true) && (command[i] == help2))
         {
             help = i + 1;
             while(command[help] != help2)
@@ -181,7 +178,7 @@ sp get_command_inf(string command)
         }
 
         //extracting road cost
-        if((command[i - 1] == 't') && (f_out.road_flag == true) && (command[i] == ':'))
+        if((command[i - 1] == 't') && (road_flag == true) && (command[i] == ':'))
         {
             help = i + 1;
             while(command[help] != '}')
@@ -193,7 +190,7 @@ sp get_command_inf(string command)
         }
 
         //extracting destination name
-        if((command[i] == '(') && (f_out.road_flag == true))
+        if((command[i] == '(') && (road_flag == true))
         {
             help = i + 1;
             name.clear();
@@ -230,12 +227,6 @@ void show_package(sp inp)
     cout << boolalpha << "node_flag = " << inp.node_flag << endl;
     cout << boolalpha << "galaxy_flag = " << inp.galaxy_flag << endl;
     cout << boolalpha << "road_flag = " << inp.road_flag << endl;
-    cout << "name = " << inp.name << endl;
-    cout << "name2 = " << inp.name2 << endl;
-    cout << "node type = " << inp.node_type << endl;
-    cout << "id = " << inp.id << endl;
-    cout << "galaxy name = " << inp.galaxy_name << endl;
-    cout << "\n----------------------------\n";
 }
 
 #endif
