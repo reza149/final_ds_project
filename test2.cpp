@@ -4,6 +4,11 @@
 #include<cstdio>
 #include<vector>
 
+#include"command_reader.hpp"
+#include"wold_maker.hpp"
+#include"object.hpp"
+#include"sh_external_path.hpp"
+
 using namespace std;
 
 void func(vector <int> * temp)
@@ -143,6 +148,54 @@ int main()
     cout << my_stoi(o_galaxy_name) << endl;
 
     return 0;
+}
+
+//////////////////////////////////////////////////////////////////////////////////////////////////////
+
+typedef struct dijkstra_unit dij_u;
+
+struct dijkstra_unit
+{
+    string node_name;
+    int cost;
+    string path;
+};
+
+
+
+void dijkstra(universe world, int o_galaxy_index, int o_node_index)
+{
+    int graph_size = world.galaxy_list[o_galaxy_index].node_list.size() - 1;
+    int graph[graph_size][graph_size];
+
+    for(int i = 0; i < graph_size; i++)
+    {
+        for(int j = 0; j < graph_size; j++)
+        {
+            graph[i][j] = 0;
+        }
+    }
+
+    for(int i = 0; i < graph_size; i++)
+    {
+        for(int j = i + 1; j < graph_size; j++)
+        {
+            if(world.galaxy_list[o_galaxy_index].node_list[i].is_there_road(world.galaxy_list[o_galaxy_index].node_list[j].get_name()))
+            {
+                graph[i][j] = 1;
+            }
+        }
+    }
+
+    for(int i = 0; i < graph_size; i++)
+    {
+        for(int j = 0; j < graph_size; j++)
+        {
+            cout << graph[i][j] << " ";
+        }
+        cout << endl;
+    }
+
 }
 
 

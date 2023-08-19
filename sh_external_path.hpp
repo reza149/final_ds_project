@@ -14,6 +14,7 @@
 #include"object.hpp"
 
 void findShortestPath(vector<node> graph, node startNode, node endNode);
+void dijkstra(universe world, int o_galaxy_index, int o_node_index);
 
 
 void find_path(sp command_inf, universe world)
@@ -36,16 +37,17 @@ void find_path(sp command_inf, universe world)
     int d_galaxy_index = world.search_galaxy(d_galaxy_name);
     int d_node_index = world.search_node(d_node_name, d_galaxy_index);
 
+    dijkstra(world, o_galaxy_index, o_node_index);
+
     //cout << "o_g name = " << o_galaxy_name << "o_d name" << o_node_name << "d_g name = " << d_galaxy_name << "d_d name" << d_node_name << endl;
 
     if(o_galaxy_name != d_galaxy_name)
     {
 
     }
-
     if(o_galaxy_name == d_galaxy_name)
     {
-        findShortestPath(world.galaxy_list[o_galaxy_index].node_list,  world.galaxy_list[o_galaxy_index].node_list[o_node_index], world.galaxy_list[d_galaxy_index].node_list[d_node_index]);
+        //world.galaxy_list[o_galaxy_index].find_shortest(world.galaxy_list[o_galaxy_index].node_list[o_node_index], world.galaxy_list[d_galaxy_index].node_list[d_node_index]);
     }
     
 }
@@ -62,84 +64,48 @@ int my_stoi(string inp)
     return sum;
 }
 
-
-
-
-void findShortestPath(vector<node> graph, node startNode, node endNode)
+void dijkstra(universe world, int o_galaxy_index, int o_node_index)
 {
-    int n = graph.size();
-    vector<int> distance(n, INT_MAX); // Distance from start node to each node
-    vector<int> prev(n, -1); // Previous node in the shortest path
+    int graph_size = world.galaxy_list[o_galaxy_index].node_list.size();
+    int graph[graph_size][graph_size];
+    int road_index;
 
-    // Custom comparator for the priority queue
-    auto cmp = [](const pair<int, int>& a, const pair<int, int>& b) {
-        return a.second > b.second;
-    };
-    priority_queue<pair<int, int>, vector<pair<int, int>>, decltype(cmp)> pq(cmp); // Min heap for Dijkstra's algorithm
-
-    // Initialize the distance of the start node to 0
-    distance[my_stoi(startNode.get_name())] = 0;
-
-    // Push the start node to the priority queue
-    pq.push(make_pair(my_stoi(startNode.get_name()), 0));
-
-    while (!pq.empty())
+    for(int i = 0; i < graph_size; i++)
     {
-        // Get the node with the minimum distance from the priority queue
-        int currNode = pq.top().first;
-        int currDist = pq.top().second;
-        pq.pop();
-
-        // If the current distance is greater than the calculated distance, skip the node
-        if (currDist > distance[currNode])
-            continue;
-
-        // Iterate through all the roads from the current node
-        for (const road& r : graph[currNode].road_list)
+        for(int j = 0; j < graph_size; j++)
         {
-            // Calculate the distance to the neighboring node
-            int neighborNode = my_stoi(r.destination_node_name);
-            int neighborDist = currDist + r.cost;
-
-            // If the calculated distance is less than the current distance, update the distance and previous node
-            if (neighborDist < distance[neighborNode])
+            graph[i][j] = 0;
+        }
+    }
+    /*
+    for(int i = 0; i < world.galaxy_list[o_galaxy_index].node_list.size(); i++)
+    {
+        cout << i << " = " << world.galaxy_list[o_galaxy_index].node_list[i].get_name() << endl;
+    }
+    */
+    for(int i = 0; i < graph_size; i++)
+    {
+        for(int j = 0; j < graph_size; j++)
+        {
+            road_index = world.galaxy_list[o_galaxy_index].node_list[i].is_there_road(world.galaxy_list[o_galaxy_index].node_list[j].get_name());
+            if(road_index != -1)
             {
-                distance[neighborNode] = neighborDist;
-                prev[neighborNode] = currNode;
-                pq.push(make_pair(neighborNode, neighborDist));
+                graph[i][j] = world.galaxy_list[o_galaxy_index].node_list[i].road_list[road_index].cost;
+                //cout << graph[i][j] << endl;
             }
         }
     }
-
-    // Check if a path exists from the start node to the end node
-    if (prev[my_stoi(endNode.get_name())] == -1)
+    /*
+    for(int i = 0; i < graph_size; i++)
     {
-        cout << "No path exists between the nodes." << endl;
-        return;
+        for(int j = 0; j < graph_size; j++)
+        {
+            cout << graph[i][j] << "\t";
+        }
+        cout << endl;
     }
-
-    // Reconstruct the shortest path
-    vector<int> path;
-    int currentNode = my_stoi(endNode.get_name());
-    while (currentNode != -1)
-    {
-        path.push_back(currentNode);
-        currentNode = prev[currentNode];
-    }
-    reverse(path.begin(), path.end());
-
-    // Print the shortest path
-    cout << "Shortest path: ";
-    for (int i : path)
-    {
-        cout << i << " ";
-    }
-    cout << endl;
+    */
 }
-
-
-
-
 
 
 #endif

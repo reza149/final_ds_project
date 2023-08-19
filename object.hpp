@@ -4,6 +4,8 @@
 #include<iostream>
 #include<string>
 #include<vector>
+#include<map>
+#include<algorithm>
 
 #include"object.hpp"
 
@@ -33,6 +35,7 @@ class node
     void set_name_id_galaxy(string input, string number, string input2);
     void print_name_id();
     string get_name();
+    int is_there_road(string name);
 
     private:
     string name;
@@ -57,6 +60,18 @@ void node::set_name_id_galaxy(string input, string number, string input2)
     type = input2;
 }
 
+int node::is_there_road(string name)
+{
+    for(int i = 0; i < road_list.size(); i++)
+    {
+        if(road_list[i].destination_node_name == name)
+        {
+            return i;
+        }
+    }
+    return -1;
+}
+
 ///////////////////////////////////////////////////////////////////////
 class galaxy
 {
@@ -65,6 +80,8 @@ class galaxy
 
     void set_name_id(string input, string number);
     string get_name();
+    //void find_shortest(node strart, node end);
+    //int find_node(string name);
 
     private:
     string name;
@@ -82,6 +99,99 @@ void galaxy::set_name_id(string input, string number)
     id = number;
 }
 
+/*
+void galaxy :: find_shortest(node start ,node end_node)
+{
+    auto it = find(node_list.begin() ,node_list.end() ,start);
+
+
+    if (it == node_list.end())
+    {
+        cerr << "Can Not Find Node" << endl;
+        return ;
+    }
+
+    map<int ,string> temp ;
+    map<string ,int> answer ;
+    string last_str ;
+    int last_cost ;
+
+    for (size_t i = 0; i < start.road_list.size() ; i++)
+    {
+        temp[start.road_list[i].cost] = start.road_list[i].destination_node_name;
+        answer[start.road_list[i].destination_node_name] = start.road_list[i].cost ;
+
+        sort(temp.begin() ,temp.end());
+    }
+
+    int index = it - node_list.begin() ;
+
+    if (index + 1 > node_list.size())
+    {
+        cerr << "Invalid Position" << endl;
+        return ;
+    }
+
+    while (true)
+    {
+        index = find_node(temp.begin()->second);
+        last_str = temp.begin()->second;
+        last_cost = temp.begin()->first;
+        temp.erase(temp.begin()->first);
+
+        
+
+        for (size_t i = 0; i < node_list[index].road_list.size() ; i++)
+        {
+            if (answer.find(node_list[index].road_list[i].destination_node_name) == answer.end())
+            {
+                answer[node_list[index].road_list[i].destination_node_name] = node_list[index].road_list[i].cost + last_cost ;
+                temp[node_list[index].road_list[i].cost + last_cost ] = node_list[index].road_list[i].destination_node_name;
+            }
+            
+            else
+            {
+                if (node_list[index].road_list[i].cost + last_cost < answer[node_list[index].road_list[i].destination_node_name])
+                {
+                    auto replace = answer.find(node_list[index].road_list[i].destination_node_name);
+
+                    replace->second = node_list[index].road_list[i].cost + last_cost;
+
+                    while (true)
+                    {
+                        if (temp.find(replace->second) != temp.end() && temp[replace->second] == replace->first)
+                        {
+                            auto temp2 = temp.find(replace->second);
+                            temp2->second = replace->first ;
+                            break;
+                        }
+                    } // end of while
+                } // end of if
+            } // end of else
+
+            sort(temp.begin() ,temp.end());
+        } // end of for
+
+        if (temp.size() <= 1)
+            break;
+    } // end of while(true)
+    
+    
+    cout << "Cost : " << answer.find(end_node.get_name())->second << endl;
+
+}
+
+
+int galaxy :: find_node(string n)
+{
+    for (size_t i = 0; i < node_list.size() ; i++)
+    {
+        if (n == node_list[i].get_name())
+            return i ;
+    }   
+    return -1;
+}
+*/
 
 
 ///////////////////////////////////////////////////////////////////////
@@ -174,9 +284,6 @@ void universe::show_universe()
         cout << "\n\n";
     }
 }
-
-
-
 
 
 #endif

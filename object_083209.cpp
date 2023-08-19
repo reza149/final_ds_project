@@ -5,8 +5,6 @@
 #include<string>
 #include<vector>
 #include<map>
-#include<queue>
-#include<climits>
 #include<algorithm>
 
 using namespace std;
@@ -68,6 +66,8 @@ class galaxy
 
     void set_name_id(string input, string number);
     string get_name();
+    void find_shortest(node ,node);
+    int find_node(string);
 
     private:
     string name;
@@ -93,7 +93,6 @@ class universe
     vector <galaxy> galaxy_list;
     
     void show_universe();
-    vector<node> shortest_path(vector<node>, node, node);
 };
 
 
@@ -128,76 +127,103 @@ void universe::show_universe()
 }
 
 
-void findShortestPath(vector<node>& graph, node& startNode, node& endNode)
+void galaxy :: find_shortest(node start ,node end_node)
 {
-    int n = graph.size();
-    vector<int> distance(n, INT_MAX); // Distance from start node to each node
-    vector<int> prev(n, -1); // Previous node in the shortest path
+    auto it = find(node_list.begin() ,node_list.end() ,start);
 
-    // Custom comparator for the priority queue
-    auto cmp = [](const pair<int, int>& a, const pair<int, int>& b) {
-        return a.second > b.second;
-    };
-    priority_queue<pair<int, int>, vector<pair<int, int>>, decltype(cmp)> pq(cmp); // Min heap for Dijkstra's algorithm
 
-    // Initialize the distance of the start node to 0
-    distance[stoi(startNode.get_name())] = 0;
-
-    // Push the start node to the priority queue
-    pq.push(make_pair(stoi(startNode.get_name()), 0));
-
-    while (!pq.empty())
+    if (it == node_list.end())
     {
-        // Get the node with the minimum distance from the priority queue
-        int currNode = pq.top().first;
-        int currDist = pq.top().second;
-        pq.pop();
+        cerr << "Can Not Find Node" << endl;
+        return ;
+    }
 
-        // If the current distance is greater than the calculated distance, skip the node
-        if (currDist > distance[currNode])
-            continue;
+    map<int ,string> temp ;
+    map<string ,int> answer ;
+    string last_str ;
+    int last_cost ;
 
-        // Iterate through all the roads from the current node
-        for (const road& r : graph[currNode].road_list)
+    for (size_t i = 0; i < start.road_list.size() ; i++)
+    {
+        temp[start.road_list[i].cost] = start.road_list[i].destination_node_name;
+        answer[start.road_list[i].destination_node_name] = start.road_list[i].cost ;
+
+        sort(temp.begin() ,temp.end());
+    }
+
+    int index = it - node_list.begin() ;
+
+    if (index + 1 > node_list.size())
+    {
+        cerr << "Invalid Position" << endl;
+        return ;
+    }
+
+    while (true)
+    {
+        index = find_node(temp.begin()->second);
+        last_str = temp.begin()->second;
+        last_cost = temp.begin()->first;
+        temp.erase(temp.begin()->first);
+
+        
+
+        for (size_t i = 0; i < node_list[index].road_list.size() ; i++)
         {
-            // Calculate the distance to the neighboring node
-            int neighborNode = stoi(r.destination_node_name);
-            int neighborDist = currDist + r.cost;
-
-            // If the calculated distance is less than the current distance, update the distance and previous node
-            if (neighborDist < distance[neighborNode])
+            if (answer.find(node_list[index].road_list[i].destination_node_name) == answer.end())
             {
-                distance[neighborNode] = neighborDist;
-                prev[neighborNode] = currNode;
-                pq.push(make_pair(neighborNode, neighborDist));
+                answer[node_list[index].road_list[i].destination_node_name] = node_list[index].road_list[i].cost + last_cost ;
+                temp[node_list[index].road_list[i].cost + last_cost ] = node_list[index].road_list[i].destination_node_name;
             }
-        }
-    }
+            
+            else
+            {
+                if (node_list[index].road_list[i].cost + last_cost < answer[node_list[index].road_list[i].destination_node_name])
+                {
+                    auto replace = answer.find(node_list[index].road_list[i].destination_node_name);
 
-    // Check if a path exists from the start node to the end node
-    if (prev[stoi(endNode.get_name())] == -1)
-    {
-        cout << "No path exists between the nodes." << endl;
-        return;
-    }
+                    replace->second = node_list[index].road_list[i].cost + last_cost;
 
-    // Reconstruct the shortest path
-    vector<int> path;
-    int currentNode = stoi(endNode.get_name());
-    while (currentNode != -1)
-    {
-        path.push_back(currentNode);
-        currentNode = prev[currentNode];
-    }
-    reverse(path.begin(), path.end());
+                    while (true)
+                    {
+                        if (temp.find(replace->second) != temp.end() && temp[replace->second] == replace->first)
+                        {
+                            auto temp2 = temp.find(replace->second);
+                            temp2->second = replace->first ;
+                            break;
+                        }
+                    } // end of while
+                } // end of if
+            } // end of else
 
-    // Print the shortest path
-    cout << "Shortest path: ";
-    for (int i : path)
-    {
-        cout << i << " ";
-    }
-    cout << endl;
+            sort(temp.begin() ,temp.end());
+        } // end of for
+
+        if (temp.size() <= 1)
+            break;
+    } // end of while(true)
+    
+    
+    cout << "Cost : " << answer.find(end_node.get_name())->second << endl;
+
 }
+
+
+
+int galaxy :: find_node(string n)
+{
+    for (size_t i = 0; i < node_list.size() ; i++)
+    {
+        if (n == node_list[i].get_name())
+            return i ;
+    }   
+}
+
+int main()
+{
+    return 0;
+}
+
+//g++ -o fpp object_083209.cpp
 
 #endif
