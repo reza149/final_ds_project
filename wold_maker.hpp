@@ -87,10 +87,16 @@ int command_type_identifier(sp command)
         return 5;
     }
 
+    //show world command
+    if(command.show_world_flag == true)
+    {
+        return 6;
+    }
+
     //exit command
     if(command.exit_flag == true)
     {
-        return 6;
+        return 7;
     }
 
     return 0;
@@ -179,12 +185,24 @@ void builder(universe * world, sp build_map, int command_type)
 
         road_temp.destination_galaxy_name = destination_galaxy;
         road_temp.destination_node_name = destination_node;
+        string help1;
 
         road_temp.origin_node_name = origin_node;
         road_temp.origin_galaxy_name = origin_galaxy;
+        string help2;
 
         //putting road in the origin node
         (*world).galaxy_list[origin_galaxy_index].node_list[origin_node_index].road_list.push_back(road_temp);
+
+        //changing origin and destination to store in the another node
+        help1 = road_temp.origin_galaxy_name;
+        road_temp.origin_galaxy_name = road_temp.destination_galaxy_name;
+        road_temp.destination_galaxy_name = help1;
+
+        help2 = road_temp.origin_node_name;
+        road_temp.origin_node_name = road_temp.destination_node_name;
+        road_temp.destination_node_name = help2;
+
         //putting road in the destination node
         (*world).galaxy_list[destination_galaxy_index].node_list[destination_node_index].road_list.push_back(road_temp);
 

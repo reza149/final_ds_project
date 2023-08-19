@@ -89,11 +89,12 @@ class universe
 {
     public:
     vector <galaxy> galaxy_list;
+    vector <node> external_node_list;
 
     int search_galaxy(string galaxy_name);
     int search_node(string node_name, int galaxy_index);
 
-    
+    void external_graph_maker();
     void show_universe();
 };
 
@@ -123,11 +124,26 @@ int universe::search_node(string node_name, int galaxy_index)
     return -1;
 }
 
+//making external graph
+void universe::external_graph_maker()
+{
+    node temp;
+    for(int i = 0; i < galaxy_list.size(); i++)
+    {
+        for(int j = 0; j < galaxy_list[i].node_list.size(); j++)
+        {
+            temp = galaxy_list[i].node_list[j];
+            external_node_list.push_back(temp);
+        }
+    }
+}
+
 
 
 //print all galaxies and nodes and  roads
 void universe::show_universe()
 {
+    cout << "fuck" << endl;
     for(int i = 0; i < galaxy_list.size(); i++)
     {
         cout << galaxy_list[i].get_name() << endl;
@@ -138,15 +154,19 @@ void universe::show_universe()
             {
                 if(galaxy_list[i].node_list[j].road_list[h].internal_flag == true)
                 {
-                    cout << "destination name = " 
-                    << galaxy_list[i].node_list[j].road_list[h].destination_node_name 
-                    << " cost = " << galaxy_list[i].node_list[j].road_list[h].cost << "*** ";
+                   cout << "internal(nonbg) : " 
+                   << galaxy_list[i].node_list[j].road_list[h].origin_node_name 
+                   << "-> " << galaxy_list[i].node_list[j].road_list[h].destination_node_name 
+                   << " cost = " << galaxy_list[i].node_list[j].road_list[h].cost
+                   << " ** ";
                 }
                 if(galaxy_list[i].node_list[j].road_list[h].external_flag == true)
                 {
-                    cout << "destination galaxy name = " << galaxy_list[i].node_list[j].road_list[h].destination_galaxy_name 
-                    << " destination name = " << galaxy_list[i].node_list[j].road_list[h].destination_node_name 
-                    << " cost = " <<  galaxy_list[i].node_list[j].road_list[h].cost << "*** ";                                         
+                    cout << "external(bg) : " 
+                   << galaxy_list[i].node_list[j].road_list[h].origin_node_name 
+                   << "-> " << galaxy_list[i].node_list[j].road_list[h].destination_node_name 
+                   << " cost = " << galaxy_list[i].node_list[j].road_list[h].cost
+                   << " ** ";                                  
                 }
             }
             cout << endl;

@@ -19,6 +19,7 @@ struct package
     //user handling flags
     bool build_flag;
     bool exit_flag;
+    bool show_world_flag;
     string name;
     string name2;
     string node_type;
@@ -37,6 +38,7 @@ sp default_func(sp inp)
     inp.road_flag = false;
     inp.create_flag = false;
     inp.build_flag = false;
+    inp.show_world_flag = false;
     inp.name = "&";
     inp.name2 = "&";
     inp.node_type = "&";
@@ -81,6 +83,9 @@ sp command_flag(sp inp, string command)
 
     //finding exit word
     inp.exit_flag = word_finder(command, "exit");
+
+    //finding show world
+    inp.show_world_flag = word_finder(command, "show world");
 
     return inp;
 }

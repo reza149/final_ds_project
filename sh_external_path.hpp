@@ -50,6 +50,20 @@ void find_path(sp command_inf, universe world)
     
 }
 
+int my_stoi(string inp)
+{
+    int conv;
+    int sum = 0;
+    for(int i = 0; i < inp.size(); i++)
+    {
+        conv = inp[i];
+        sum = sum + conv;
+    }
+    return sum;
+}
+
+
+
 
 void findShortestPath(vector<node> graph, node startNode, node endNode)
 {
@@ -64,10 +78,10 @@ void findShortestPath(vector<node> graph, node startNode, node endNode)
     priority_queue<pair<int, int>, vector<pair<int, int>>, decltype(cmp)> pq(cmp); // Min heap for Dijkstra's algorithm
 
     // Initialize the distance of the start node to 0
-    distance[stoi(startNode.get_name())] = 0;
+    distance[my_stoi(startNode.get_name())] = 0;
 
     // Push the start node to the priority queue
-    pq.push(make_pair(stoi(startNode.get_name()), 0));
+    pq.push(make_pair(my_stoi(startNode.get_name()), 0));
 
     while (!pq.empty())
     {
@@ -84,7 +98,7 @@ void findShortestPath(vector<node> graph, node startNode, node endNode)
         for (const road& r : graph[currNode].road_list)
         {
             // Calculate the distance to the neighboring node
-            int neighborNode = stoi(r.destination_node_name);
+            int neighborNode = my_stoi(r.destination_node_name);
             int neighborDist = currDist + r.cost;
 
             // If the calculated distance is less than the current distance, update the distance and previous node
@@ -98,7 +112,7 @@ void findShortestPath(vector<node> graph, node startNode, node endNode)
     }
 
     // Check if a path exists from the start node to the end node
-    if (prev[stoi(endNode.get_name())] == -1)
+    if (prev[my_stoi(endNode.get_name())] == -1)
     {
         cout << "No path exists between the nodes." << endl;
         return;
@@ -106,7 +120,7 @@ void findShortestPath(vector<node> graph, node startNode, node endNode)
 
     // Reconstruct the shortest path
     vector<int> path;
-    int currentNode = stoi(endNode.get_name());
+    int currentNode = my_stoi(endNode.get_name());
     while (currentNode != -1)
     {
         path.push_back(currentNode);
@@ -122,6 +136,8 @@ void findShortestPath(vector<node> graph, node startNode, node endNode)
     }
     cout << endl;
 }
+
+
 
 
 

@@ -18,6 +18,7 @@ void print_command_struct()
          << "create (A) - [:road {cost:50}] -> (B)\n"
          << "find AS4.W->AS4.X\n"
          << "build world\n"
+         << "show world\n"
          << "exit" << endl;
     cout << "*******************************" << endl;
 }
@@ -44,7 +45,7 @@ int main()
     if(stream_command == "start")
     {
         print_command_struct();
-        while(type_command != 6)
+        while(type_command != 7)
         {
             //cin.ignore();
             getline(cin, stream_command);
@@ -54,7 +55,7 @@ int main()
             {
                 cout << "invalied input" << endl;
             }
-            if((type_command != 0) && (type_command != 6))
+            if((type_command != 0) && (type_command != 7))
             {
                 //creating road or node or galaxy command
                 if(type_command <= 3)
@@ -77,6 +78,11 @@ int main()
                         command_inf = get_command_inf(file_command[i]);
                         builder(world_ptr, command_inf, command_type_identifier(command_inf));
                     }
+                }
+                //show world command
+                if(type_command == 6)
+                {
+                    world.show_universe();
                 }
             }
         }

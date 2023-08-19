@@ -106,6 +106,18 @@ void func45(int * help)
     func50(help);
 }
 
+int my_stoi(string inp)
+{
+    int conv;
+    int sum = 0;
+    for(int i = 0; i < inp.size(); i++)
+    {
+        conv = inp[i];
+        sum = sum + conv;
+    }
+    return sum;
+}
+
 
 
 int main()
@@ -128,7 +140,7 @@ int main()
     
     o_galaxy_name = "reza";
 
-    cout << stoi(o_galaxy_name) << endl;
+    cout << my_stoi(o_galaxy_name) << endl;
 
     return 0;
 }

@@ -1,10 +1,44 @@
-asw1 	      id = 12
-nsw1 bg	      id = 121
-nsw2 non bg   id = 122
-nsw3 non bg   id = 123
+asw1 	      id = 12 
 
+nsw1 bg	      id = 121|ex: nsw1->asw2.naw1 c: 60|ex: nsw1->asw2.naw5 c: 65|ex: nsw1->asw3.opw1 c: 50|
+in: nsw1->nsw2 c: 30|in: nsw1->nsw5 c: 15|
+
+nsw2 non bg   id = 122|in: nsw2->nsw1 c: 30|in: nsw2->nsw3 c: 30|
+
+nsw3 non bg   id = 123|in: nsw3->nsw2 c: 30|in: nsw3->nsw4 c: 10|in: nsw3->nsw5 c: 20|
+
+nsw4 non bg   id = 124|in: nsw4->nsw3 c: 10|
+
+nsw5 bg	      id = 125|ex: nsw5->asw2.naw1 c:75|ex: nsw5->asw3.opw1 c: 80|in: nsw5->nsw1 c: 15|
+in: nsw5->nsw3 c: 20|
+
+*******************************************************
 
 asw2		id = 13
-naw1 bg		id = 131
-naw2 nonbg	id = 132
-naw3 nonbg	id = 133
+
+naw1 bg		id = 131|ex: naw1->asw1.nsw1 c: 60|ex: naw1->asw1.nsw5 c: 75|in: naw1->naw2 c:30|
+in: naw1->naw3 c:30|
+
+naw2 nonbg	id = 132|in: naw2->naw1 c: 30|in: naw2->naw3 c:30|in: naw2->naw4 c:30|
+
+naw3 nonbg	id = 133|in: naw3->naw1 c:50|in: naw3->naw2 c:30|in: naw3->naw4 c:35|
+
+naw4 nonbg      id = 134|in: naw4->naw5 c: 45|in: naw4->maw3 c: 35|
+
+naw5 bg	        id = 135|ex: naw5->asw1.nsw1 c: 65|ex: naw5->asw3.opw1 c: 70|in: naw5->naw4 c: 35|
+
+*******************************************************
+
+
+asw3            id = 14
+
+opw1 bg		id = 141|ex opw1->asw1.nsw1 c:50|ex: opw1->asw1.nsw5 c:80|ex: opw1->asw2.naw5 c: 70|
+in: opw1->opw3 c: 65|
+
+opw2 nonbg 	id = 142|in: opw2->opw5 c:75|in: opw2->opw4 c:45|
+
+opw3 nonbg	id = 143|in: opw3->opw1 c: 65|in: opw3->opw5 c:55|
+
+opw4 nonbg	id = 144|in: opw4->opw2 c: 45|
+
+opw5 nonbg	id = 145|in: opw5->opw3 c: 55|in: opw5->opw2 c: 75|
