@@ -62,6 +62,7 @@ int main()
                 {
                     command_inf = get_command_inf(stream_command);
                     builder(world_ptr, command_inf, type_command);
+                    world.external_graph_maker();
                 }
                 //find command 
                 if(type_command == 4)
@@ -91,7 +92,6 @@ int main()
     else
     {
         cout << "invalied input" << endl;
-        
     }
     
 

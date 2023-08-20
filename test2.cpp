@@ -145,7 +145,9 @@ int main()
     
     o_galaxy_name = "reza";
 
-    cout << my_stoi(o_galaxy_name) << endl;
+    o_galaxy_name.clear();
+
+    cout << my_stoi(o_galaxy_name << endl;
 
     return 0;
 }

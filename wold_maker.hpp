@@ -127,7 +127,7 @@ void builder(universe * world, sp build_map, int command_type)
     {
         //creating node mode
         case 1:
-        node_temp.set_name_id_galaxy(build_map.name, build_map.id, build_map.galaxy_name);
+        node_temp.set_name_id_type(build_map.name, build_map.id, build_map.node_type);
 
         for(int i = 0; i < (*world).galaxy_list.size(); i++)
         {
@@ -161,12 +161,7 @@ void builder(universe * world, sp build_map, int command_type)
         //finding destination galaxy
         destination_galaxy_index = (*world).search_galaxy(destination_galaxy);
         destination_node_index = (*world).search_node(destination_node, destination_galaxy_index);
-        /*
-        cout << "origin galaxy name = " << origin_galaxy << " index = " << origin_galaxy_index << " ";
-        cout << "origin node name = " << origin_node << " index = " << origin_node_index << endl;
-        cout << "destination galaxy name = " << destination_galaxy << " index = " << destination_galaxy_index << " ";
-        cout << "destination node name = " << destination_node << " index = " << destination_node_index << endl;
-        */
+
         //create external road
         if(origin_galaxy != destination_galaxy)
         {
